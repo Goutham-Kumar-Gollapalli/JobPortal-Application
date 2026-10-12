@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+     <form method="post" action="/views/add">
+
+         <label>
+             Enter post id:
+             <input name="postId" type="number"/>
+
+             Enter post profile:
+             <input name="postProfile" type="text"/>
+
+             Enter post Description:
+             <input name="postDesc" type="text"/>
+
+             Enter req experience:
+             <input name="reqExperience" type="number"/>
+
+             Enter post TechStack:
+             <input name="postTechStack" type="text"/>
+         </label>
+         <button type="submit">submit</button>
+         <button type="reset">Reset</button>
+     </form>
+</body>
+</html>

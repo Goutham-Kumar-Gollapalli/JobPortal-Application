@@ -1,0 +1,31 @@
+
+.navbar{
+    display: flex;
+    background-color: #1362e0;
+    padding: 15px 30px;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-links{
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    color: white;
+    gap: 70px;
+    align-items: center;
+   
+}
+.logo{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: larger;
+    text-decoration: none;
+    font-weight: bolder;
+    color: darksalmon;
+}
+.navbar{
+    /* background-color: #1362e0; */
+}
+.nav-links a{
+    color: white;
+    text-decoration: none;
+}

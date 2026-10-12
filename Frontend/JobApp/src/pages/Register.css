@@ -1,0 +1,23 @@
+.register-form{
+
+}
+.register > div{
+    display: grid;
+    grid-template-columns: 200px 250px;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+div input{
+    align-items: center;
+    margin-left: 20px;
+    /* border: 2px solid blac; */
+}
+.register label{
+    /* text-align: right; */
+}
+button{
+    width: 100px;
+    height: 25px;
+}
