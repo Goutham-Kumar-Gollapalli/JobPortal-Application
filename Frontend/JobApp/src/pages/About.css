@@ -1,0 +1,40 @@
+.head{
+    background-color: rgb(226, 192, 40);
+    color: rgb(15, 9, 9);
+    padding: 15px;
+    border-radius: 20px;
+    margin: 50px;
+    text-align: left;
+}
+h1{
+    color: black;
+}
+.para1{
+    margin-bottom: 10px;
+    /* margin-bottom: 20px; */
+}
+.mission{
+    text-align: left;
+    padding-left: 55px;
+    margin-bottom: 10px;
+}
+.offer{
+    text-align: left;
+    padding: 20px;
+    margin: 40px;
+}
+.offer-items{
+    /* background-color: white; */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 20px;
+    padding: 30px;
+}
+.item-1,.item-2,.item-3,.item-4{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 7px;
+}
+
