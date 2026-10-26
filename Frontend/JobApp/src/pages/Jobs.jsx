@@ -8,7 +8,7 @@ const Jobs = () => {
     const fetchJobs = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:8080/views/jobposts'
+          'https://jobportal-application-hv8g.onrender.com/views/jobposts'
         );
         console.log(response.data);
         

@@ -23,7 +23,7 @@ async function handleSubmit(e){
   console.log("Data being sent:", jobpost);
   try {
     const response=await axios.post(
-      'http://localhost:8080/views/jobpost/add',jobpost);
+      'https://jobportal-application-hv8g.onrender.com/views/jobpost/add',jobpost);
       if(response.ok)
       {
         alert("Job post Added Successfully");
