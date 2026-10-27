@@ -2,8 +2,8 @@ import React from 'react'
 import axios from 'axios';
 import { useState ,useEffect} from 'react';
 import './Register.css';
-const API_URL = import.meta.env.VITE_API_URL_LOCAL;
-
+// const API_URL = import.meta.env.VITE_API_URL_LOCAL;
+const API_URL = import.meta.env.VITE_API_URL;
 const Register = () => {
   console.log("API URL:", API_URL);
   const response=axios.post()

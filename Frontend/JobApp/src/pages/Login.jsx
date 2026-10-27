@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Login.css";
-const API_URL = import.meta.env.VITE_API_URL_LOCAL;
-
+// const API_URL = import.meta.env.VITE_API_URL_LOCAL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
   console.log("API URL:", API_URL);

@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Signup.css";
-const API_URL = import.meta.env.VITE_API_URL_LOCAL;
+// const API_URL = import.meta.env.VITE_API_URL_LOCAL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 function SignUp() {
-  console.log("API URL:", API_URL);
+  // console.log("API URL:", API_URL);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
