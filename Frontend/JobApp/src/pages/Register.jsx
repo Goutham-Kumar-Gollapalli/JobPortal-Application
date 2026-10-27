@@ -2,7 +2,10 @@ import React from 'react'
 import axios from 'axios';
 import { useState ,useEffect} from 'react';
 import './Register.css';
+const API_URL = import.meta.env.VITE_API_URL_LOCAL;
+
 const Register = () => {
+  console.log("API URL:", API_URL);
   const response=axios.post()
   const [jobpost,setJobpost]=useState({
     postProfile:"",
@@ -23,7 +26,7 @@ async function handleSubmit(e){
   console.log("Data being sent:", jobpost);
   try {
     const response=await axios.post(
-      'https://jobportal-application-hv8g.onrender.com/views/jobpost/add',jobpost);
+      'API_URL/jobpost/add',jobpost);
       if(response.ok)
       {
         alert("Job post Added Successfully");

@@ -1,12 +1,19 @@
+
 import React from 'react'
 import {
-  createBrowserRouter,RouterProvider,Outlet} from 'react-router-dom'
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate,
+  useLocation
+} from 'react-router-dom'
 
 import Navbar from './component/Navbar'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Jobs from './pages/Jobs'
 import About from './pages/About'
+import Signup from './pages/SignUp'
 import Register from './pages/Register'
 
 const Layout = () => {
@@ -20,6 +27,29 @@ const Layout = () => {
   )
 }
 
+// Protect pages based on the user's login and role
+const ProtectedRoute = ({ allowedRoles, children }) => {
+  const location = useLocation()
+  const token = sessionStorage.getItem('token')
+  const role = sessionStorage.getItem('role')
+
+  if (!token) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location }}
+      />
+    )
+  }
+
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to="/jobs" replace />
+  }
+
+  return children
+}
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -28,6 +58,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />
+      },
+      {
+        path: 'signup',
+        element: <Signup />
       },
       {
         path: 'jobs',
@@ -39,7 +73,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'register',
-        element: <Register />
+        element: (
+          <ProtectedRoute allowedRoles={['EMPLOYER']}>
+            <Register />
+          </ProtectedRoute>
+        )
       },
       {
         path: 'login',
