@@ -12,6 +12,7 @@ public class JobService {
 
     @Autowired
     private JobRepo repo;
+
     public List<JobPost> getAllJobs() {
        return  repo.findAll();
     }
@@ -50,4 +51,8 @@ public class JobService {
 //
 //        repo.saveAll(jobs);
     }
+
+//    public List<JobPost> JobPost getJobposts() {
+//        return repo.findAll();
+//    }
 }

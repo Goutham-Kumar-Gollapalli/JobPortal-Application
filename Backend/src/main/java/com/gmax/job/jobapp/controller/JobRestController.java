@@ -24,12 +24,16 @@ public class JobRestController {
                 """;
     }
 
+//    @GetMapping("/jobpost/all")
+//    public JobPost getJobpost(){
+//        return service.getJobposts();
+//    }
     @PostMapping("/jobpost/add")
     public JobPost addJobPost(@RequestBody JobPost jobpost){
         return service.addJobPost(jobpost);
     }
 
-    @GetMapping("/jobposts")
+    @GetMapping("/jobposts/all")
     public List<JobPost> getAllJobs(){
         return service.getAllJobs();
     }
