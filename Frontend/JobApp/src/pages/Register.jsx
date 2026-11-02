@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useState ,useEffect} from 'react';
 import './Register.css';
 // const API_URL = import.meta.env.VITE_API_URL_LOCAL;
+// const API_URL = import.meta.env.VITE_API_URL;
 const API_URL = import.meta.env.VITE_API_URL;
 const Register = () => {
   console.log("API URL:", API_URL);
@@ -25,12 +26,22 @@ async function handleSubmit(e){
   e.preventDefault();
   console.log("Data being sent:", jobpost);
   try {
-    const response=await axios.post(
-      'API_URL/jobpost/add',jobpost);
-      if(response.ok)
-      {
-        alert("Job post Added Successfully");
-      }
+    const response = await fetch(
+        `${API_URL}/views/jobpost/add'`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({jobpost}),
+        }
+      );
+    // const response=await axios.post(
+    //   'API_URL/jobpost/add',jobpost);
+    //   if(response.ok)
+    //   {
+    //     alert("Job post Added Successfully");
+    //   }
   } catch (error) {
     console.log("Status:", error.response?.status);
     console.log("Backend error:", error.response?.data);
