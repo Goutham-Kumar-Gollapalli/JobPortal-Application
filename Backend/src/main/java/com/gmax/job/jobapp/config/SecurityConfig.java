@@ -53,36 +53,46 @@ public class SecurityConfig {
                                 SessionCreationPolicy.STATELESS
                         )
                 )
+
+                .authorizeHttpRequests(auth -> auth
+
+                        // Login and signup
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Anyone can view jobs
+                        .requestMatchers(HttpMethod.GET, "/views/jobposts/**").permitAll()
+
+                        // Only employers (including your admin account) can add jobs
+                        .requestMatchers(HttpMethod.POST, "/views/jobpost/add")
+                        .hasRole("EMPLOYER")
+
+                        // Only employers can update jobs
+                        .requestMatchers(HttpMethod.PUT, "/views/jobpost/**")
+                        .hasRole("EMPLOYER")
+
+                        // Only employers can delete jobs
+                        .requestMatchers(HttpMethod.DELETE, "/views/jobpost/**")
+                        .hasRole("EMPLOYER")
+
+                        // CORS
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        .anyRequest().authenticated()
+                );
 //                .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers("/api/auth/**").permitAll()
+//
+//                        // Allow everyone to view jobs
+//                        .requestMatchers(HttpMethod.GET, "/views/jobposts/**").permitAll()
+//
+//                        // Allow OPTIONS requests for CORS
 //                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 //
-//                        // Anyone can view jobs
-//                        .requestMatchers(HttpMethod.GET, "/job/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/views/jobpost/**").permitAll()
-//
-//                        // Only employers can modify jobs
-//                        .requestMatchers(HttpMethod.POST, "/job/**").hasRole("EMPLOYER")
-//                        .requestMatchers(HttpMethod.PUT, "/job/**").hasRole("EMPLOYER")
-//                        .requestMatchers(HttpMethod.PATCH, "/job/**").hasRole("EMPLOYER")
-//                        .requestMatchers(HttpMethod.DELETE, "/job/**").hasRole("EMPLOYER")
-//
 //                        .anyRequest().authenticated()
+//                ).addFilterBefore(
+//                        (Filter) jwtAuthenticationFilter,
+//                        UsernamePasswordAuthenticationFilter.class
 //                );
-        .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-
-                // Allow everyone to view jobs
-                .requestMatchers(HttpMethod.GET, "/views/jobposts/**").permitAll()
-
-                // Allow OPTIONS requests for CORS
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                .anyRequest().authenticated()
-        ).addFilterBefore(
-                        (Filter) jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
 //                .authorizeHttpRequests(auth -> auth
 //                        // Signup and login
 //                        .requestMatchers("/api/auth/**").permitAll()
