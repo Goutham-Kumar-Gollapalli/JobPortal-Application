@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -42,28 +40,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader =
                 request.getHeader("Authorization");
 
-        // No token: continue to the next filter
-        if (authHeader == null ||
-                !authHeader.startsWith("Bearer ")) {
-
+        // If there is no JWT token, continue to the next filter
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-
             String token = authHeader.substring(7);
 
-            String username =
-                    jwtService.extractUsername(token);
+            String username = jwtService.extractUsername(token);
 
             if (username != null &&
                     SecurityContextHolder.getContext()
                             .getAuthentication() == null) {
 
                 UserDetails userDetails =
-                        userDetailsService
-                                .loadUserByUsername(username);
+                        userDetailsService.loadUserByUsername(username);
 
                 if (jwtService.isTokenValid(token, userDetails)) {
 
@@ -83,14 +76,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .setAuthentication(authentication);
 
                     // DEBUGGING
-                    System.out.println("Authenticated: " +
-                            authentication.isAuthenticated());
+                    System.out.println("Authenticated: "
+                            + authentication.isAuthenticated());
 
-                    System.out.println("Username: " +
-                            authentication.getName());
+                    System.out.println("Username: "
+                            + authentication.getName());
 
-                    System.out.println("Authorities: " +
-                            authentication.getAuthorities());
+                    System.out.println("Authorities: "
+                            + authentication.getAuthorities());
                 }
             }
 
