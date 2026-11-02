@@ -9,6 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 function SignUp() {
   // console.log("API URL:", API_URL);
   const navigate = useNavigate();
+  
 
   const [formData, setFormData] = useState({
     name: "",
