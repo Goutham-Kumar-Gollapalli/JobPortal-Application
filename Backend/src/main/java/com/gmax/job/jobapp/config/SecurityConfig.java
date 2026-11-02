@@ -79,7 +79,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 .anyRequest().authenticated()
-        );
+        ).addFilterBefore(
+                        (Filter) jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 //                .authorizeHttpRequests(auth -> auth
 //                        // Signup and login
 //                        .requestMatchers("/api/auth/**").permitAll()
@@ -108,10 +111,7 @@ public class SecurityConfig {
 //                        // All other endpoints require authentication
 //                        .anyRequest().authenticated()
 //                )
-//                .addFilterBefore(
-//                        (Filter) jwtAuthenticationFilter,
-//                        UsernamePasswordAuthenticationFilter.class
-//                );
+
 
         return http.build();
     }
