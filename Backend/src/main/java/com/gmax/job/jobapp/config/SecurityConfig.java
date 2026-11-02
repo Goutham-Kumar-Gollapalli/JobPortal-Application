@@ -1,10 +1,8 @@
+
 package com.gmax.job.jobapp.config;
 
-
-//import com.example.jobportal.security.JwtAuthenticationFilter;
-
 import com.gmax.job.jobapp.security.JwtAuthenticationFilter;
-import jakarta.servlet.Filter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +30,7 @@ public class SecurityConfig {
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter) {
+
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -43,94 +42,76 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
+                // Enable CORS
                 .cors(Customizer.withDefaults())
 
-                // REST API using JWT authentication
+                // Disable CSRF for JWT-based REST APIs
                 .csrf(csrf -> csrf.disable())
 
+                // Stateless authentication
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
                         )
                 )
 
+                // Authorization rules
                 .authorizeHttpRequests(auth -> auth
 
-                        // Login and signup
+                        // Public login and signup
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Anyone can view jobs
-                        .requestMatchers(HttpMethod.GET, "/views/jobposts/**").permitAll()
+                        // Anyone can view job posts
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/views/jobposts/**"
+                        ).permitAll()
 
-                        // Only employers (including your admin account) can add jobs
-                        .requestMatchers(HttpMethod.POST, "/views/jobpost/add")
-                        .hasRole("EMPLOYER")
+                        // Only employers can add jobs
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/views/jobpost/add"
+                        ).hasRole("EMPLOYER")
 
                         // Only employers can update jobs
-                        .requestMatchers(HttpMethod.PUT, "/views/jobpost/**")
-                        .hasRole("EMPLOYER")
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/views/jobpost/**"
+                        ).hasRole("EMPLOYER")
 
                         // Only employers can delete jobs
-                        .requestMatchers(HttpMethod.DELETE, "/views/jobpost/**")
-                        .hasRole("EMPLOYER")
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/views/jobpost/**"
+                        ).hasRole("EMPLOYER")
 
-                        // CORS
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Allow CORS preflight requests
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**"
+                        ).permitAll()
 
+                        // All remaining endpoints require authentication
                         .anyRequest().authenticated()
-                );
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/**").permitAll()
-//
-//                        // Allow everyone to view jobs
-//                        .requestMatchers(HttpMethod.GET, "/views/jobposts/**").permitAll()
-//
-//                        // Allow OPTIONS requests for CORS
-//                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//
-//                        .anyRequest().authenticated()
-//                ).addFilterBefore(
-//                        (Filter) jwtAuthenticationFilter,
-//                        UsernamePasswordAuthenticationFilter.class
-//                );
-//                .authorizeHttpRequests(auth -> auth
-//                        // Signup and login
-//                        .requestMatchers("/api/auth/**").permitAll()
-//
-//                        // CORS preflight requests
-//                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//
-//                        // Anyone can view job posts
-//                        .requestMatchers(HttpMethod.GET, "/job/**").permitAll()
-//
-//                        // Only employers can create job posts
-//                        .requestMatchers(HttpMethod.POST, "/job/**")
-//                        .hasRole("EMPLOYER")
-//
-//                        // Only employers can update job posts
-//                        .requestMatchers(HttpMethod.PUT, "/job/**")
-//                        .hasRole("EMPLOYER")
-//
-//                        .requestMatchers(HttpMethod.PATCH, "/job/**")
-//                        .hasRole("EMPLOYER")
-//
-//                        // Only employers can delete job posts
-//                        .requestMatchers(HttpMethod.DELETE, "/job/**")
-//                        .hasRole("EMPLOYER")
-//
-//                        // All other endpoints require authentication
-//                        .anyRequest().authenticated()
-//                )
+                )
 
+                // Register JWT filter before username/password filter
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
 
+    // Password encryption
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
 
+    // CORS configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
@@ -160,7 +141,8 @@ public class SecurityConfig {
                 new UrlBasedCorsConfigurationSource();
 
         source.registerCorsConfiguration(
-                "/**", configuration
+                "/**",
+                configuration
         );
 
         return source;

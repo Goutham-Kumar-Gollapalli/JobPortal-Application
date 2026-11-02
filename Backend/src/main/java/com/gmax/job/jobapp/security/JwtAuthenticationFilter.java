@@ -1,11 +1,5 @@
+
 package com.gmax.job.jobapp.security;
-
-
-
-
-import com.gmax.job.jobapp.model.User;
-import com.gmax.job.jobapp.repository.UserRepository;
-import io.jsonwebtoken.JwtException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,13 +22,14 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final UserDetailsService userDetailsService;
 
     public JwtAuthenticationFilter(
             JwtService jwtService,
-            UserRepository userRepository) {
+            UserDetailsService userDetailsService) {
+
         this.jwtService = jwtService;
-        this.userRepository = userRepository;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -42,51 +39,70 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
+        final String authHeader =
+                request.getHeader("Authorization");
 
-        if (header == null || !header.startsWith("Bearer ")) {
+        // No token: continue to the next filter
+        if (authHeader == null ||
+                !authHeader.startsWith("Bearer ")) {
+
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = header.substring(7);
-
         try {
-            String email = jwtService.extractEmail(token);
 
-            if (SecurityContextHolder.getContext()
-                    .getAuthentication() == null) {
+            String token = authHeader.substring(7);
 
-                User user = userRepository.findByEmail(email)
-                        .orElse(null);
+            String username =
+                    jwtService.extractUsername(token);
 
-                if (user != null
-                        && jwtService.isTokenValid(token, email)) {
+            if (username != null &&
+                    SecurityContextHolder.getContext()
+                            .getAuthentication() == null) {
 
-                    var authorities = List.of(
-                            new SimpleGrantedAuthority(
-                                    "ROLE_" + user.getRole().name()));
+                UserDetails userDetails =
+                        userDetailsService
+                                .loadUserByUsername(username);
 
-                    var authentication =
+                if (jwtService.isTokenValid(token, userDetails)) {
+
+                    UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    user.getEmail(),
+                                    userDetails,
                                     null,
-                                    authorities);
+                                    userDetails.getAuthorities()
+                            );
 
                     authentication.setDetails(
                             new WebAuthenticationDetailsSource()
-                                    .buildDetails(request));
+                                    .buildDetails(request)
+                    );
 
                     SecurityContextHolder.getContext()
                             .setAuthentication(authentication);
+
+                    // DEBUGGING
+                    System.out.println("Authenticated: " +
+                            authentication.isAuthenticated());
+
+                    System.out.println("Username: " +
+                            authentication.getName());
+
+                    System.out.println("Authorities: " +
+                            authentication.getAuthorities());
                 }
             }
 
-        } catch (JwtException | IllegalArgumentException exception) {
-            // Invalid token: request remains unauthenticated.
+        } catch (Exception e) {
+
+            SecurityContextHolder.clearContext();
+
+            System.out.println(
+                    "JWT Authentication Error: " + e.getMessage()
+            );
         }
 
         filterChain.doFilter(request, response);
     }
 }
-
